@@ -1,6 +1,6 @@
 import CounterDemoSection from "./CounterDemoSection";
 import DataFetchSection from "./DataFetchSection";
-import SimpleLoginSection from "./SimpleLoginSection";
+import SimpleContextSection from "./SimpleContextSection";
 export default function Page() {
   return (
     <main>
@@ -11,9 +11,9 @@ export default function Page() {
           server side?
         </p>
       </header>
+      <SimpleContextSection />
       <CounterDemoSection />
       <DataFetchSection />
-      <SimpleLoginSection />
     </main>
   );
 }
