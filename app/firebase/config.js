@@ -2,6 +2,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
+// import firestore
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,5 +24,6 @@ let analytics;
 if (typeof window !== "undefined") {
   analytics = getAnalytics(app);
 }
+// connect firestore to the app
 const auth = getAuth(app);
 export { app, auth, analytics };
