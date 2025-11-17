@@ -33,7 +33,7 @@ export default function Page() {
         setEditId(null);
       } else {
         // otherwise be add
-        await addItem("users", inputvalue);
+        await addItem("users", inputValue);
       }
       getItems("users");
       setInputValue("");
@@ -44,6 +44,10 @@ export default function Page() {
   const handleEdit = (item) => {
     setInputValue(item.name);
     setEditId(item.id);
+  };
+  const handleCancel = () => {
+    setEditId(null);
+    setInputValue("");
   };
   const handleDelete = async (id) => {
     try {
@@ -87,7 +91,7 @@ export default function Page() {
         </ul>
       </section>
       <section className="my-4">
-        <h2>Form to add or update an element</h2>
+        <h2 className="2xl font-bold">{editId ? "Edit Name" : "Add Name"}</h2>
         <div>
           <label htmlFor="name">Name: </label>
           <input
@@ -102,6 +106,22 @@ export default function Page() {
             }}
             className="bg-slate-800"
           />
+          <button
+            onClick={handleSubmit}
+            className={`px-4 py-2 ${
+              editId ? "bg-yellow-600" : "bg-green-500"
+            } mx-2`}
+          >
+            {editId ? "Submit Edit" : "Submit Add"}
+          </button>
+          {editId && (
+            <button
+              onClick={handleCancel}
+              className="bg-gray-500 px-4 py-2 my-2"
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </section>
     </main>
