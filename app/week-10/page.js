@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/app/contexts/AuthContext";
 import { useFirestoreCollection } from "@/app/hooks/useFirestoreCollection";
 import {
   addItem,
@@ -16,27 +17,38 @@ const formDataSchema = {
   interests: [],
 };
 export default function Page() {
+  const { authUser, loading } = useAuth();
   const [formData, setFormData] = useState(formDataSchema);
   // TODO: Set interests state
+  const [interestInput, setInterestInput] = useState("");
+  const [interests, setInterests] = useState([]);
   const [editId, setEditId] = useState(null);
   const { data: items, isDataLoading, dataError } = useFirestoreCollection();
+
+  const addInterest = () => {
+    if (interestInput.trim() && !interests.includes(interestInput.trim())) {
+      setInterests([...interests, interestInput.trim()]);
+      setInterestInput("");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e?.preventDefault();
     // for loop, check that all required fields have content in them or return
     if (!formData.name.trim()) return;
+    const userData = { ...formData, interests };
     try {
       if (editId) {
-        console.log(`updating item: ${editId} with ${formData}`);
-        await updateItem(editId, "users", formData);
+        console.log(`updating item: ${editId} with ${userData}`);
+        await updateItem(editId, "users", userData);
         setEditId(null);
       } else {
-        console.log(`Adding new item: ${formData}`);
-        await addItem("users", formData);
+        console.log(`Adding new item: ${userData}`);
+        await addItem("users", userData);
       }
       setFormData(formDataSchema);
     } catch (error) {
-      console.error(`Error adding ${formData}`, error);
+      console.error(`Error adding ${userData}`, error);
     }
   };
 
@@ -79,9 +91,10 @@ export default function Page() {
     fetchItems();
   }, []);
 
-  if (isDataLoading) {
+  if (isDataLoading || loading) {
     return (
       <div className="my-12">
+        {/* TODO: if loading and not isloading say auth loading */}
         <p className="text-lg py-8">Data Loading</p>
       </div>
     );
@@ -111,6 +124,18 @@ export default function Page() {
                       ? character.species
                       : "No Species Specified"}
                   </li>
+                  <li>
+                    <ul>
+                      {character.interests.map((interest) => (
+                        <li key={interest}>
+                          {interest}
+                          <span className="bg-yellow-600 cursor-pointer p-1 rounded-md mx-4">
+                            X
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
                 </ul>
                 <div className="flex gap-2">
                   <button
@@ -135,93 +160,91 @@ export default function Page() {
       </section>
       <section className="my-8">
         <h2 className="text-lg">{editId ? "Edit User" : "Add User"}</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="name">Name: </label>
+        {authUser ? (
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="name">Name: </label>
+              <input
+                type="text"
+                id="name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="border-1 mx-2  p-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="species">Species: </label>
+              <input
+                type="text"
+                id="species"
+                value={formData.species}
+                onChange={(e) =>
+                  setFormData({ ...formData, species: e.target.value })
+                }
+                className="border-1 mx-2  p-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="age">Age: </label>
+              <input
+                type="number"
+                id="age"
+                value={formData.age || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, age: e.target.value })
+                }
+                className="border-1 mx-2  p-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="interests">Interests: </label>
+              <div>
+                <ul>
+                  {interests.map((interest) => (
+                    <li key={interest}>{interest}</li>
+                  ))}
+                </ul>
+                <input
+                  type="text"
+                  value={interestInput}
+                  onChange={(e) => setInterestInput(e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && (e.preventDefault(), addInterest())
+                  }
+                  placeholder="Add interest"
+                  className="border border-gray-300 dark:border-gray-700 rounded px-2 py-1"
+                />
+                <button
+                  type="button"
+                  onClick={addInterest}
+                  className=" px-4 py-2 bg-blue-500 dark:bg-blue-800 mx-2"
+                >
+                  Add Interest
+                </button>
+              </div>
+            </div>
             <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="border-1 mx-2  p-2"
+              type="submit"
+              className={`px-4 py-2 m-2 rounded-md ${
+                editId ? "bg-blue-500" : "bg-blue-700"
+              }`}
+              value={editId ? "edit user" : "add user"}
             />
-          </div>
-          <div>
-            <label htmlFor="species">Species: </label>
-            <input
-              type="text"
-              id="species"
-              value={formData.species}
-              onChange={(e) =>
-                setFormData({ ...formData, species: e.target.value })
-              }
-              className="border-1 mx-2  p-2"
-            />
-          </div>
-          <div>
-            <label htmlFor="age">Age: </label>
-            <input
-              type="number"
-              id="age"
-              value={formData.age || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, age: e.target.value })
-              }
-              className="border-1 mx-2  p-2"
-            />
-          </div>
-          <div>{/* TODO: interests */}</div>
-          <input
-            type="submit"
-            className={`px-4 py-2 m-2 rounded-md ${
-              editId ? "bg-blue-500" : "bg-blue-700"
-            }`}
-            value={editId ? "edit user" : "add user"}
-          />
-          {editId && (
-            <button
-              onClick={handleCancel}
-              className="px-4 py-2 m-2 rounded-md bg-gray-700"
-            >
-              Cancel Edit
-            </button>
-          )}
-        </form>
-      </section>
-      {/* <section>
-        <label htmlFor="input-name">{editId ? "Edit User" : "Add User"}</label>
-        <input
-          type="text"
-          id="input-name"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleSubmit();
-            }
-          }}
-          className="border-1 mx-2  p-2"
-        />
-        <button
-          onClick={() => handleSubmit()}
-          className={`px-4 py-2 m-2 rounded-md ${
-            editId ? "bg-blue-500" : "bg-blue-700"
-          }`}
-        >
-          {editId ? "Edit" : "Add"}
-        </button>
-        {editId && (
-          <button
-            onClick={handleCancel}
-            className="px-4 py-2 m-2 rounded-md bg-gray-700"
-          >
-            Cancel Edit
-          </button>
+            {editId && (
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 m-2 rounded-md bg-gray-700"
+              >
+                Cancel Edit
+              </button>
+            )}
+          </form>
+        ) : (
+          <p>not authorized to view the form</p>
         )}
       </section>
- */}
     </main>
   );
 }
