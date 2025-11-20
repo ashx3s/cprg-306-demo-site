@@ -69,26 +69,30 @@ export default function Page() {
       </header>
       <section className="my-4">
         <h2>Render information from firestore</h2>
-        <ul>
-          {items.map((item) => (
-            <li key={item.id} className="my-2">
-              <h3 className="text-lg">{item.name}</h3>
-              <p>{item.id}</p>
-              <button
-                onClick={() => handleEdit(item)}
-                className="px-4 py-2 bg-yellow-600 mx-2"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="px-4 py-2 bg-red-500 mx-2"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
+        {items.length > 0 ? (
+          <ul>
+            {items.map((item) => (
+              <li key={item.id} className="my-2">
+                <h3 className="text-lg">{item.name}</h3>
+                <p>{item.id}</p>
+                <button
+                  onClick={() => handleEdit(item)}
+                  className="px-4 py-2 bg-yellow-600 mx-2"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="px-4 py-2 bg-red-500 mx-2"
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>loading</p>
+        )}
       </section>
       <section className="my-4">
         <h2 className="2xl font-bold">{editId ? "Edit Name" : "Add Name"}</h2>
