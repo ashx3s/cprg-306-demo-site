@@ -104,6 +104,14 @@ export default function Page() {
             items.map((character) => (
               <li key={character.id} className="my-4 flex gap-6">
                 <h3 className="text-lg font-medium">{character.name}</h3>
+                <ul>
+                  <li>{character.age ? character.age : "No age specified"}</li>
+                  <li>
+                    {character.species
+                      ? character.species
+                      : "No Species Specified"}
+                  </li>
+                </ul>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEdit(character)}
@@ -121,7 +129,7 @@ export default function Page() {
               </li>
             ))
           ) : (
-            <p>Loading</p>
+            <p>No Data</p>
           )}
         </ul>
       </section>
