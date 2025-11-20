@@ -14,6 +14,7 @@ import { db } from "@/app/firebase/config";
 // Create new entry
 export const addItem = async (collectionName, userData) => {
   try {
+    // TODO: Check user data before passing it
     const docRef = await addDoc(collection(db, collectionName), userData);
     console.log("User added: ", userData);
     return docRef.id;

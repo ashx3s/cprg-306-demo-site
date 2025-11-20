@@ -6,10 +6,15 @@ import {
   updateItem,
   deleteItem,
 } from "@/app/lib/controller";
+const formDataSchema = {
+  name: "",
+  species: "",
+  age: undefined,
+  interests: [],
+};
 
 export default function Page() {
-  // state for input value
-  const [inputValue, setInputValue] = useState("");
+  const [formData, setFormData] = useState(formDataSchema);
   // state for edit id
   const [editId, setEditId] = useState(null);
   // state for items TODO: Change to custom hook
@@ -25,29 +30,28 @@ export default function Page() {
   };
   const handleSubmit = async (e) => {
     e?.preventDefault();
-    if (!inputValue.trim()) return;
+    if (!formData.name.trim()) return;
     try {
       // if the edit id exists
       if (editId) {
-        await updateItem(editId, "users", inputValue);
+        await updateItem(editId, "users", formData);
         setEditId(null);
       } else {
         // otherwise be add
-        await addItem("users", inputValue);
+        await addItem("users", formData);
+        console.log(formData);
       }
-      getItems("users");
-      setInputValue("");
+      setFormData(formDataSchema);
     } catch (error) {
-      console.error(`Error adding ${inputValue} ${e}`, error);
+      console.error(`Error adding ${formData} ${e}`, error);
     }
   };
+  // TODO Update edit values
   const handleEdit = (item) => {
-    setInputValue(item.name);
     setEditId(item.id);
   };
   const handleCancel = () => {
     setEditId(null);
-    setInputValue("");
   };
   const handleDelete = async (id) => {
     try {
@@ -58,7 +62,6 @@ export default function Page() {
     }
   };
   useEffect(() => {
-    // get data from backend
     fetchItems();
   }, []);
   return (
@@ -74,7 +77,7 @@ export default function Page() {
             {items.map((item) => (
               <li key={item.id} className="my-2">
                 <h3 className="text-lg">{item.name}</h3>
-                <p>{item.id}</p>
+                {item.age ? <p>{item.age}</p> : <p>No age entered</p>}
                 <button
                   onClick={() => handleEdit(item)}
                   className="px-4 py-2 bg-yellow-600 mx-2"
@@ -94,43 +97,55 @@ export default function Page() {
           <p>loading</p>
         )}
       </section>
+      {/* Only show if authenticated user */}
       <section className="my-4">
         <h2 className="2xl font-bold">{editId ? "Edit Name" : "Add Name"}</h2>
-        <div>
-          <label htmlFor="name">Name: </label>
-          <input
-            type="text"
-            id="name"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSubmit();
+        <form onSubmit={handleSubmit}>
+          {/* input name string */}
+          <div>
+            <label htmlFor="name">Name: </label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
               }
-            }}
-            className="bg-slate-800"
-          />
-          <button
-            onClick={handleSubmit}
-            className={`px-4 py-2 ${
-              editId ? "bg-yellow-600" : "bg-green-500"
-            } mx-2`}
-          >
-            {editId ? "Submit Edit" : "Submit Add"}
+              className="bg-slate-800 text-white my-2"
+            />
+          </div>
+          {/* input species string */}
+          <div>
+            <label htmlFor="name">Species: </label>
+            <input
+              type="text"
+              id="species"
+              value={formData.species}
+              onChange={(e) =>
+                setFormData({ ...formData, species: e.target.value })
+              }
+              className="bg-slate-800 text-white my-2"
+            />
+          </div>
+          {/* input age string */}
+          <div>
+            <label htmlFor="name">Age: </label>
+            <input
+              type="number"
+              id="age"
+              value={formData.age}
+              onChange={(e) =>
+                setFormData({ ...formData, age: e.target.value })
+              }
+              className="bg-slate-800 text-white my-2"
+            />
+          </div>
+          {/* submit button */}
+          <button type="submit" className="bg-blue-500 px-4 py-2">
+            Submit
           </button>
-          {editId && (
-            <button
-              onClick={handleCancel}
-              className="bg-gray-500 px-4 py-2 my-2"
-            >
-              Cancel
-            </button>
-          )}
-        </div>
+        </form>
       </section>
     </main>
   );
 }
-// each user has an edit and delete button
-
-// form to add new user --> conditionally use the same field for updating content
