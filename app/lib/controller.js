@@ -12,13 +12,13 @@ import { db } from "@/app/firebase/config";
 // CRUD Operations
 
 // Create new entry
-export const addItem = async (collectionName, itemName) => {
+export const addItem = async (collectionName, userData) => {
   try {
-    await addDoc(collection(db, collectionName), {
-      name: itemName,
-    });
+    const docRef = await addDoc(collection(db, collectionName), userData);
+    console.log("User added: ", userData);
+    return docRef.id;
   } catch (error) {
-    console.error(`Error adding ${itemName} to ${collectionName} \n`, error);
+    console.error(`Error adding ${userData} to ${collectionName} \n`, error);
   }
 };
 // Read all entries
@@ -34,13 +34,13 @@ export const getItems = async (collectionName) => {
   }
 };
 // Update an entry
-export const updateItem = async (id, collectionName, newName) => {
+export const updateItem = async (id, collectionName, userData) => {
   try {
     const itemDoc = doc(db, collectionName, id);
-    await updateDoc(itemDoc, { name: newName });
+    await updateDoc(itemDoc, userData);
   } catch (error) {
     console.error(
-      `Error updating ${id} to ${newName} in ${collectionName} \n`,
+      `Error updating ${id} to ${userData} in ${collectionName} \n`,
       error
     );
   }
