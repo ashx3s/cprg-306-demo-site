@@ -36,7 +36,8 @@ export default function Page() {
     e?.preventDefault();
     // for loop, check that all required fields have content in them or return
     if (!formData.name.trim()) return;
-    const userData = { ...formData, interests };
+    // Pass the user id to the created document
+    const userData = { ...formData, interests, id: authUser.uid };
     try {
       if (editId) {
         console.log(`updating item: ${editId} with ${userData}`);
@@ -81,7 +82,7 @@ export default function Page() {
     return (
       <div className="my-12">
         {/* TODO: if loading and not isloading say auth loading */}
-        <p className="text-lg py-8">Data Loading</p>
+        <p className="text-lg py-8">...Loading</p>
       </div>
     );
   }
@@ -111,32 +112,40 @@ export default function Page() {
                       : "No Species Specified"}
                   </li>
                   <li>
-                    <ul>
-                      {character.interests.map((interest) => (
-                        <li key={interest}>
-                          {interest}
-                          <span className="bg-yellow-600 cursor-pointer p-1 rounded-md mx-4">
-                            X
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
+                    {authUser ? (
+                      <ul>
+                        {character.interests.map((interest) => (
+                          <li key={interest}>
+                            {interest}
+                            <span className="bg-yellow-600 cursor-pointer p-1 rounded-md mx-4">
+                              X
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      ""
+                    )}
                   </li>
                 </ul>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEdit(character)}
-                    className="px-4 py-2 m-2 rounded-md bg-yellow-700"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(character.id)}
-                    className="px-4 py-2 m-2 rounded-md bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </div>
+                {authUser ? (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(character)}
+                      className="px-4 py-2 m-2 rounded-md bg-yellow-700"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(character.id)}
+                      className="px-4 py-2 m-2 rounded-md bg-red-700"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
               </li>
             ))
           ) : (
