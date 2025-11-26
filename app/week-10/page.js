@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useFirstoreCollection } from "../hooks/useFirestoreCollection";
 import {
   addItem,
   getItems,
@@ -18,7 +19,7 @@ export default function Page() {
   // state for edit id
   const [editId, setEditId] = useState(null);
   // state for items TODO: Change to custom hook
-  const [items, setItems] = useState([]);
+  const { data: items, isDataLoading, error } = useFirstoreCollection("users");
   const fetchItems = async () => {
     try {
       const data = await getItems("users");
@@ -64,6 +65,21 @@ export default function Page() {
   useEffect(() => {
     fetchItems();
   }, []);
+  if (isDataLoading) {
+    return (
+      <div>
+        <p>Page Loading</p>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div>
+        <h1>Rendering Error</h1>
+        <p>{error}</p>
+      </div>
+    );
+  }
   return (
     // render all entries in the users collection
     <main>
@@ -72,30 +88,33 @@ export default function Page() {
       </header>
       <section className="my-4">
         <h2>Render information from firestore</h2>
-        {items.length > 0 ? (
-          <ul>
-            {items.map((item) => (
-              <li key={item.id} className="my-2">
+        <ul>
+          {items.map((item) => (
+            <li key={item.id} className="my-2">
+              <div>
                 <h3 className="text-lg">{item.name}</h3>
                 {item.age ? <p>{item.age}</p> : <p>No age entered</p>}
-                <button
-                  onClick={() => handleEdit(item)}
-                  className="px-4 py-2 bg-yellow-600 mx-2"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="px-4 py-2 bg-red-500 mx-2"
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>loading</p>
-        )}
+                {item.species ? (
+                  <p>{item.species}</p>
+                ) : (
+                  <p>No species entered</p>
+                )}
+              </div>
+              <button
+                onClick={() => handleEdit(item)}
+                className="px-4 py-2 bg-yellow-600 mx-2"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(item.id)}
+                className="px-4 py-2 bg-red-500 mx-2"
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
       </section>
       {/* Only show if authenticated user */}
       <section className="my-4">
