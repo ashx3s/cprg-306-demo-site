@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useFirestoreCollection } from "@/app/hooks/useFirestoreCollection";
 import {
@@ -76,7 +76,7 @@ export default function Page() {
       console.error(`Error Deleting ${id}`);
     }
   };
-
+  /*
   const fetchItems = async () => {
     try {
       const data = await getItems("users");
@@ -90,7 +90,7 @@ export default function Page() {
   useEffect(() => {
     fetchItems();
   }, []);
-
+*/
   if (isDataLoading || loading) {
     return (
       <div className="my-12">
