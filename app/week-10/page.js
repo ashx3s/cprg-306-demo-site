@@ -76,21 +76,7 @@ export default function Page() {
       console.error(`Error Deleting ${id}`);
     }
   };
-  /*
-  const fetchItems = async () => {
-    try {
-      const data = await getItems("users");
-      if (!data) {
-        throw new Error("No data from users");
-      }
-    } catch (error) {
-      console.error(`Error fetching items from users`, error);
-    }
-  };
-  useEffect(() => {
-    fetchItems();
-  }, []);
-*/
+
   if (isDataLoading || loading) {
     return (
       <div className="my-12">
