@@ -10,7 +10,7 @@ import {
 const formDataSchema = {
   name: "",
   species: "",
-  age: undefined,
+  age: "",
   interests: [],
 };
 
@@ -18,29 +18,22 @@ export default function Page() {
   const [formData, setFormData] = useState(formDataSchema);
   // state for edit id
   const [editId, setEditId] = useState(null);
-  // state for items TODO: Change to custom hook
   const { data: items, isDataLoading, error } = useFirstoreCollection("users");
-  const fetchItems = async () => {
-    try {
-      const data = await getItems("users");
-      setItems(data);
-      console.log(data);
-    } catch (error) {
-      console.error("Error fetching items: ", error);
-    }
-  };
+
   const handleSubmit = async (e) => {
     e?.preventDefault();
+    // client side limit to only allow if input has a name
     if (!formData.name.trim()) return;
     try {
+      // allows us to extend other information like the interests field and user ID
+      const userData = { ...formData };
       // if the edit id exists
       if (editId) {
         await updateItem(editId, "users", formData);
         setEditId(null);
       } else {
-        // otherwise be add
-        await addItem("users", formData);
-        console.log(formData);
+        await addItem("users", userData);
+        console.log(userData);
       }
       setFormData(formDataSchema);
     } catch (error) {
@@ -62,9 +55,7 @@ export default function Page() {
       console.error(`Error Deleting ${id}`);
     }
   };
-  useEffect(() => {
-    fetchItems();
-  }, []);
+
   if (isDataLoading) {
     return (
       <div>
@@ -154,7 +145,7 @@ export default function Page() {
               id="age"
               value={formData.age}
               onChange={(e) =>
-                setFormData({ ...formData, age: e.target.value })
+                setFormData({ ...formData, age: Number(e.target.value) })
               }
               className="bg-slate-800 text-white my-2"
             />
