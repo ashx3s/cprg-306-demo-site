@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import { useFirstoreCollection } from "../hooks/useFirestoreCollection";
 import {
   addItem,
@@ -18,6 +19,7 @@ export default function Page() {
   const [formData, setFormData] = useState(formDataSchema);
   // state for edit id
   const [editId, setEditId] = useState(null);
+  const { authUser, loading } = useAuth();
   const { data: items, isDataLoading, error } = useFirstoreCollection("users");
 
   const handleSubmit = async (e) => {
@@ -56,7 +58,8 @@ export default function Page() {
     }
   };
 
-  if (isDataLoading) {
+  // TODO: Specify loading as auth loading and make conditional render to show specific loading messages
+  if (isDataLoading || loading) {
     return (
       <div>
         <p>Page Loading</p>
@@ -91,71 +94,81 @@ export default function Page() {
                   <p>No species entered</p>
                 )}
               </div>
-              <button
-                onClick={() => handleEdit(item)}
-                className="px-4 py-2 bg-yellow-600 mx-2"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="px-4 py-2 bg-red-500 mx-2"
-              >
-                Delete
-              </button>
+              {authUser ? (
+                <div>
+                  <button
+                    onClick={() => handleEdit(item)}
+                    className="px-4 py-2 bg-yellow-600 mx-2"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="px-4 py-2 bg-red-500 mx-2"
+                  >
+                    Delete
+                  </button>
+                </div>
+              ) : (
+                ""
+              )}
             </li>
           ))}
         </ul>
       </section>
       {/* Only show if authenticated user */}
-      <section className="my-4">
-        <h2 className="2xl font-bold">{editId ? "Edit Name" : "Add Name"}</h2>
-        <form onSubmit={handleSubmit}>
-          {/* input name string */}
-          <div>
-            <label htmlFor="name">Name: </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="bg-slate-800 text-white my-2"
-            />
-          </div>
-          {/* input species string */}
-          <div>
-            <label htmlFor="name">Species: </label>
-            <input
-              type="text"
-              id="species"
-              value={formData.species}
-              onChange={(e) =>
-                setFormData({ ...formData, species: e.target.value })
-              }
-              className="bg-slate-800 text-white my-2"
-            />
-          </div>
-          {/* input age string */}
-          <div>
-            <label htmlFor="name">Age: </label>
-            <input
-              type="number"
-              id="age"
-              value={formData.age}
-              onChange={(e) =>
-                setFormData({ ...formData, age: Number(e.target.value) })
-              }
-              className="bg-slate-800 text-white my-2"
-            />
-          </div>
-          {/* submit button */}
-          <button type="submit" className="bg-blue-500 px-4 py-2">
-            Submit
-          </button>
-        </form>
-      </section>
+      {authUser ? (
+        <section className="my-4">
+          <h2 className="2xl font-bold">{editId ? "Edit Name" : "Add Name"}</h2>
+          <form onSubmit={handleSubmit}>
+            {/* input name string */}
+            <div>
+              <label htmlFor="name">Name: </label>
+              <input
+                type="text"
+                id="name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="bg-slate-800 text-white my-2"
+              />
+            </div>
+            {/* input species string */}
+            <div>
+              <label htmlFor="name">Species: </label>
+              <input
+                type="text"
+                id="species"
+                value={formData.species}
+                onChange={(e) =>
+                  setFormData({ ...formData, species: e.target.value })
+                }
+                className="bg-slate-800 text-white my-2"
+              />
+            </div>
+            {/* input age string */}
+            <div>
+              <label htmlFor="name">Age: </label>
+              <input
+                type="number"
+                id="age"
+                value={formData.age}
+                onChange={(e) =>
+                  setFormData({ ...formData, age: Number(e.target.value) })
+                }
+                className="bg-slate-800 text-white my-2"
+              />
+            </div>
+            {/* submit button */}
+            <button type="submit" className="bg-blue-500 px-4 py-2">
+              Submit
+            </button>
+          </form>
+        </section>
+      ) : (
+        <p>Must be authenticated to edit</p>
+      )}
     </main>
   );
 }
