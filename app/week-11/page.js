@@ -122,7 +122,7 @@ export default function Page() {
             {posts.map((post) => (
               <li key={post.id}>
                 {/* Link to the post based on its id */}
-                <Link href={`/blog/${post.id}`}>
+                <Link href={`/week-11/${post.id}`}>
                   {/* show the post title as text */}
                   <h3>{post.title}</h3>
                   {/* show the data using our formatDate  Utility */}
