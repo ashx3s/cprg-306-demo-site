@@ -5,6 +5,7 @@ import Link from "next/link";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/app/firebase/config";
 import { useAuth } from "@/app/contexts/AuthContext";
+
 export default function Page({ params }) {
   const unwrappedParams = use(params);
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function Page({ params }) {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   useEffect(() => {
     const fetchPost = async () => {
       try {

@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Duchess",
+    "species": "Cat",
+    "description": "Elegant white Turkish Angora cat and mother of three kittens"
+  },
+  {
+    "id": 2,
+    "name": "Thomas O'Malley",
+    "species": "Cat",
+    "description": "Charming alley cat who helps Duchess and her kittens"
+  },
+  {
+    "id": 3,
+    "name": "Marie",
+    "species": "Cat",
+    "description": "White kitten with a pink bow, refined and proper"
+  },
+  {
+    "id": 4,
+    "name": "Berlioz",
+    "species": "Cat",
+    "description": "Gray kitten who loves to play piano"
+  },
+  {
+    "id": 5,
+    "name": "Toulouse",
+    "species": "Cat",
+    "description": "Orange kitten who aspires to be a painter like his owner"
+  },
+  {
+    "id": 6,
+    "name": "Edgar",
+    "species": "Human",
+    "description": "The butler and main antagonist who plots against the cats"
+  },
+  {
+    "id": 7,
+    "name": "Roquefort",
+    "species": "Mouse",
+    "description": "Brave mouse and friend to the aristocat family"
+  },
+  {
+    "id": 8,
+    "name": "Scat Cat",
+    "species": "Cat",
+    "description": "Leader of the alley cat jazz band and O'Malley's friend"
+  },
+  {
+    "id": 9,
+    "name": "Madame Adelaide Bonfamille",
+    "species": "Human",
+    "description": "Wealthy elderly owner of Duchess and her kittens"
+  },
+  {
+    "id": 10,
+    "name": "Napoleon",
+    "species": "Dog",
+    "description": "Bloodhound who guards a farm with his friend Lafayette"
+  }
+]
